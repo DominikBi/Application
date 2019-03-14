@@ -2,22 +2,24 @@ package team.doma;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String args[]){
 
+        int breite = 300;
+        int hoehe = 100;
+        JTextField eingabeText = new JTextField();
 
-        // Text des Users einlesen
-        JFormattedTextField amountField;
 
-        amountField = new JFormattedTextField(100);
-        amountField.setValue(50);
-        amountField.setColumns(10);
-//        amountField.addPropertyChangeListener("value", this);
+        ArrayList <Component> eingabemaske = new ArrayList<>();
+
+        eingabemaske.add(eingabeText);
+        setUpJframe(breite, hoehe, Color.YELLOW, eingabemaske);
          }
          //setup Methode
-    public void setUpJframe(int width, int height,Component... comp){
+    public static void setUpJframe(int width, int height, Color farbe, ArrayList <Component> comp){
         //neues Jframe erstellen
         JFrame jFrame = new JFrame();
 
@@ -25,8 +27,9 @@ public class Main {
         jFrame.setTitle("Application");
 
         //loop so lange bis alle components drinne sind
-        for(int i = 0; i < comp.length; i++ ){
-            jFrame.add(comp[i]);
+        for(int i = 0; i < comp.size(); i++ ){
+            comp.get(i).setBackground(farbe);
+            jFrame.add(comp.get(i));
         }
         //Grösse einstellen
         jFrame.setSize(width ,height);
