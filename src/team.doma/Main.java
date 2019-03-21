@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main {
+    int i;
 
     public static void main(String args[]){
         Main main = new Main();
@@ -47,6 +48,7 @@ public class Main {
                  @Override
                  public void actionPerformed(ActionEvent e) {
                      if(eingabeTextDeutsch.getText()  != "" || eingabeTextSpanisch.getText()  != "") {
+                         i++;
                          WordObj wortPaar = new WordObj();
                          wortPaar.deutschWord = eingabeTextDeutsch.getText();
                          wortPaar.spanischWord = eingabeTextSpanisch.getText();
@@ -70,18 +72,26 @@ public class Main {
 
         String home = System.getProperty("user.home");
         String lineSep = System.getProperty("file.separator");
+        String enter = System.getProperty("line.separator");
         String path = home + lineSep + "IdeaProjects" + lineSep + "Application" + lineSep + "data" + lineSep + name + ".txt";
-        File file = new File(path);
-        FileOutputStream fos = new FileOutputStream(file);
-        System.out.println("Ich schreibe in den Pfad "+path);
+
+
+
+        FileOutputStream fos = new FileOutputStream(path);
+        for(int e =  0; e < i; e++) {
+            fos.write(enter.getBytes());
+        }
+        System.out.println("Ich schreibe in den Pfad "+ path);
         fos.write(cutWhitespace(wordObj.getDeutschWord()).getBytes());
         fos.write("/".getBytes());
         fos.write(cutWhitespace(wordObj.getSpanischWord()).getBytes());
         fos.write("/".getBytes());
-        fos.write(wordObj.toString(wordObj.priority);
-        System.out.println("Ich habe geschrieben");
+        System.out.println(wordObj.getPriority());
+        fos.write(String.valueOf(wordObj.getPriority()).getBytes());
+
         fos.flush();
         fos.close();
+
 
 
     }
