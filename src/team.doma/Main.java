@@ -18,9 +18,8 @@ public class Main {
 
          }
          public void run(){
-        String i = System.getProperty("user.home");
-        System.out.println(i);
-             int breite = 300;
+
+             int breite = 700;
              int hoehe = 100;
              JFrame frame = new JFrame();
 
@@ -31,31 +30,35 @@ public class Main {
 
              JButton button = new JButton("Submit");
 
-             eingabeTextDeutsch.setSize(100,100);
-             eingabeTextSpanisch.setSize(100,100);
+             eingabeTextDeutsch.setSize(300,100);
+             eingabeTextSpanisch.setSize(300,100);
              button.setSize(100,100);
-             eingabeTextDeutsch.setText("DeutschesWort");
-             eingabeTextSpanisch.setText("SpanischesWort");
+             eingabeTextDeutsch.setText("                    ");
+             eingabeTextSpanisch.setText("                    ");
 
              frame.setLayout(new FlowLayout());
+             frame.setSize(breite, hoehe);
              frame.add(eingabeTextDeutsch);
              frame.add(eingabeTextSpanisch);
              frame.add(button);
              frame.setVisible(true);
-
+             System.out.println("Ich habe die Box angezeigt");
              button.addActionListener(new ActionListener() {
                  @Override
                  public void actionPerformed(ActionEvent e) {
                      if(eingabeTextDeutsch.getText()  != "" || eingabeTextSpanisch.getText()  != "") {
-                         WordObj wordObj = new WordObj();
-                         wordObj.deutschWord = eingabeTextDeutsch.getText();
-                         wordObj.spanischWord = eingabeTextSpanisch.getText();
+                         WordObj wortPaar = new WordObj();
+                         wortPaar.deutschWord = eingabeTextDeutsch.getText();
+                         wortPaar.spanischWord = eingabeTextSpanisch.getText();
+                         wortPaar.priority = 1;
+                         System.out.println(wortPaar.deutschWord);
+                         System.out.println(wortPaar.spanischWord);
                          eingabeTextDeutsch.setText("");
                          eingabeTextSpanisch.setText("");
                          try {
-                             writeFile("SpanischZeug",wordObj);
-                         } catch (IOException e1) {
-
+                             writeFile("SpanischZeug",wortPaar);
+                         } catch (IOException exception1) {
+                            System.out.println("had ned geklappt, denn:" + exception1);
                          }
                      }
                  }
@@ -66,19 +69,25 @@ public class Main {
     public void writeFile(String name, WordObj wordObj) throws IOException {
 
         String home = System.getProperty("user.home");
-        String lineSep = System.getProperty("line.separator");
-        String path = home + "IdeaProjects" + lineSep + "Application" + lineSep + "data" + lineSep + name + ".txt";
+        String lineSep = System.getProperty("file.separator");
+        String path = home + lineSep + "IdeaProjects" + lineSep + "Application" + lineSep + "data" + lineSep + name + ".txt";
         File file = new File(path);
         FileOutputStream fos = new FileOutputStream(file);
-        fos.write(wordObj.getDeutschWord().getBytes());
+        System.out.println("Ich schreibe in den Pfad "+path);
+        fos.write(cutWhitespace(wordObj.getDeutschWord()).getBytes());
         fos.write("/".getBytes());
-        fos.write(wordObj.getSpanischWord().getBytes());
+        fos.write(cutWhitespace(wordObj.getSpanischWord()).getBytes());
         fos.write("/".getBytes());
-        fos.write(wordObj.getPrority());
+        fos.write(wordObj.toString(wordObj.priority);
+        System.out.println("Ich habe geschrieben");
         fos.flush();
         fos.close();
 
 
+    }
+    public String cutWhitespace(String s){
+        s.replaceAll(" ","");
+        return s;
     }
 
 }

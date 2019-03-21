@@ -3,7 +3,7 @@ package team.doma;
 public class WordObj {
     String deutschWord;
     String spanischWord;
-    int prority = 0;
+    int priority = 1;
 
     public void setDeutschWord(String deutschWord) {
         this.deutschWord = deutschWord;
@@ -13,8 +13,8 @@ public class WordObj {
         this.spanischWord = spanischWord;
     }
 
-    public void setPrority(int prority) {
-        this.prority = prority;
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public String getDeutschWord() {
@@ -25,7 +25,7 @@ public class WordObj {
         return spanischWord;
     }
 
-    public int getPrority() {
-        return prority;
+    public int getPriority() {
+        return priority;
     }
 }
