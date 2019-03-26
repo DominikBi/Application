@@ -10,9 +10,7 @@ import java.util.List;
 
 public class Main {
     int i;
-    boolean Testing;
-    JButton TestButton = new JButton("Test");
-
+    JButton testButton = new JButton("Test");
 
     public static void main(String args[]){
 
@@ -22,98 +20,100 @@ public class Main {
          }
          public void run(){
              i = 0;
+// definiere Größe des Eingabe-Fensters
              int breite = 700;
              int hoehe = 100;
+// erzeuge Frame
              JFrame frame = new JFrame();
-
+// erzeuge Textfelder zur Erfassung der Wortpärchen
              JTextField eingabeTextDeutsch = new JTextField();
              eingabeTextDeutsch.setToolTipText("Deutsch");
              JTextField eingabeTextSpanisch = new JTextField();
              eingabeTextSpanisch.setToolTipText("Spanisch");
 
-             JButton button = new JButton("Submit");
+             JButton submitButton = new JButton("Submit");
 
-
-             eingabeTextDeutsch.setSize(300,100);
-             eingabeTextSpanisch.setSize(300,100);
-             button.setSize(100,100);
+// setze Größe der Textfelder
+             submitButton.setSize(100,100);
              eingabeTextDeutsch.setText("                    ");
              eingabeTextSpanisch.setText("                    ");
-
+// befülle Eingabe-Fenster und zeige es an
              frame.setLayout(new FlowLayout());
              frame.setSize(breite, hoehe);
              frame.add(eingabeTextDeutsch);
              frame.add(eingabeTextSpanisch);
-             frame.add(button);
-             frame.add(TestButton);
+             frame.add(submitButton);
+             frame.add(testButton);
              frame.setVisible(true);
-             System.out.println("Ich habe die Box angezeigt");
-             button.addActionListener(new ActionListener() {
+             System.out.println("Ich habe die Boxen angezeigt");
+// Lege leere Listen an
+             String[] alDeutsch = new String[2000];
+             String[] alSpanisch = new String[2000];
+             int[] alPriority = new int[2000];
+
+             submitButton.addActionListener(new ActionListener() {
                  @Override
                  public void actionPerformed(ActionEvent e) {
-                     if(eingabeTextDeutsch.getText()  != "" || eingabeTextSpanisch.getText()  != "") {
+                     if(eingabeTextDeutsch.getText()  != "" && eingabeTextSpanisch.getText()  != "") {
+// Lese erfasste Wortpärchen aus den Textfeldern und schreibe sie in Listen
 
-                         String[] alDeutsch;
-                         String[] alSpanisch;
-                         int[] alPriority;
-                         System.out.println(alDeutsch.size());
                          alDeutsch[i] = eingabeTextDeutsch.getText();
-                         alSpanisch[i] =  eingabeTextSpanisch.getText();
-                         alPriority.set(i, 1);
+                         alSpanisch[i] = eingabeTextSpanisch.getText();
+                         alPriority[i] = 1;
                          eingabeTextDeutsch.setText("");
                          eingabeTextSpanisch.setText("");
-                         try {
-                             writeFile("SpanischZeug", alDeutsch, alSpanisch, alPriority);
-                         } catch (IOException exception1) {
-                            System.err.println("had ned geklappt, denn: " + exception1);
-                         }
+                     }
+                     else {
+                         System.out.println("fehlerhafte Eingabe!");
                      }
                      i++;
                  }
              });
 
+             testButton.addActionListener(new ActionListener() {
+                 @Override
+                 public void actionPerformed(ActionEvent e) {
 
+                     try {
+//schreibe Wortpärchen in Datei
+                         writeFile("SpanischZeug", alDeutsch, alSpanisch, alPriority);
+                     }
+                     catch (IOException exception1) {
+                         System.err.println("had ned geklappt, denn: " + exception1);
+                     }
+                 }
+             });
          }
 
-    public void writeFile(String name, List<String> deutschAl, List<String> spanischAl, List<Integer> priorityAl) throws IOException {
-
+    public void writeFile(String name, String[] deutschAl, String[] spanischAl, int [] priorityAl) throws IOException {
+// Bestimme Ablagepfad
         String home = System.getProperty("user.home");
         String lineSep = System.getProperty("file.separator");
-
         String path = home + lineSep + "IdeaProjects" + lineSep + "Application" + lineSep + "data" + lineSep + name + ".txt";
+//
         FileWriter fr = new FileWriter(path);
         BufferedWriter fos = new BufferedWriter(fr);
-
-            for (int e = 0; e < i;e++) {
-                System.out.println("Ich schreibe in den Pfad " + path);
-                fos.newLine();
-                fos.append(cutWhitespace(deutschAl.get(e)));
-                fos.append("/");
-                fos.append(cutWhitespace(spanischAl.get(e)));
-                fos.append("/");
-                fos.append(String.valueOf(priorityAl.get(e)));
+// schreibe Datei mit allen Eingaben
+        for (int e = 0; e < i; e++) {
+            System.out.println("Ich schreibe in den Pfad " + path);
+            fos.newLine();
+            fos.append(cutWhitespace(deutschAl[e]));
+            fos.append("/");
+            fos.append(cutWhitespace(spanischAl[e]));
+            fos.append("/");
+            fos.append(String.valueOf(priorityAl[e]));
+            try {
+                fos.flush();
+            } catch (IOException e1) {
+                System.err.println("Could not flush BufferedWriter:" + e1);
             }
-            TestButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        fos.flush();
-                    } catch (IOException e1) {
-                        System.err.println("Could not flush BufferedWriter" + e1);
-                    }
-                    try {
-                        fr.close();
-                    } catch (IOException e1) {
-                        System.err.println("Could not close FileWriter" + e1);
-                    }
-                }
-            });
-
-
-
+            try {
+                fr.close();
+            } catch (IOException e1) {
+                System.err.println("Could not close FileWriter:" + e1);
+            }
         }
-
-
+    }
     public String cutWhitespace(String s){
         s.replaceAll(" ","");
         return s;
