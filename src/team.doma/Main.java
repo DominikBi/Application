@@ -6,19 +6,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
+    String home = System.getProperty("user.home");
+    String lineSep = System.getProperty("file.separator");
+
     int i;
     JButton testButton = new JButton("Test");
 
-    public static void main(String args[]){
+    public static void main(String args[]) throws IOException {
 
         Main main = new Main();
         main.run();
 
          }
-         public void run(){
+         public void run() throws IOException {
              i = 0;
 // definiere Größe des Eingabe-Fensters
              int breite = 700;
@@ -45,6 +50,7 @@ public class Main {
              frame.add(submitButton);
              frame.add(testButton);
              frame.setVisible(true);
+             System.out.println(readFile("SpanischZeug").get(0));
              System.out.println("Ich habe die Boxen angezeigt");
 // Lege leere Listen an
              String[] alDeutsch = new String[2000];
@@ -85,12 +91,11 @@ public class Main {
              });
          }
 
-    public void writeFile(String name, String[] deutschAl, String[] spanischAl, int [] priorityAl) throws IOException {
+    public void writeFile(String filename, String[] deutschAl, String[] spanischAl, int [] priorityAl) throws IOException {
 // Bestimme Ablagepfad
-        String home = System.getProperty("user.home");
-        String lineSep = System.getProperty("file.separator");
-        String path = home + lineSep + "IdeaProjects" + lineSep + "Application" + lineSep + "data" + lineSep + name + ".txt";
-//
+        String path = home + lineSep + "IdeaProjects" + lineSep + "Application" + lineSep + "data" + lineSep + filename + ".txt";
+
+
         FileWriter fr = new FileWriter(path);
         BufferedWriter fos = new BufferedWriter(fr);
 // schreibe Datei mit allen Eingaben
@@ -98,9 +103,9 @@ public class Main {
             System.out.println("Ich schreibe in den Pfad " + path);
             fos.newLine();
             fos.append(cutWhitespace(deutschAl[e]));
-            fos.append("/");
+            fos.append(":");
             fos.append(cutWhitespace(spanischAl[e]));
-            fos.append("/");
+            fos.append(":");
             fos.append(String.valueOf(priorityAl[e]));
             try {
                 fos.flush();
@@ -113,6 +118,63 @@ public class Main {
                 System.err.println("Could not close FileWriter:" + e1);
             }
         }
+    }
+
+    public Map<Integer,String> readFile(String filename) throws IOException {
+        Map<Integer,String> map = new HashMap<>();
+        int inObjCounter = 0;
+        int totalCounter = 0;
+        String path = home + lineSep + "IdeaProjects" + lineSep + "Application" + lineSep + "data" + lineSep + filename + ".txt";
+        char c;
+        String result = "";
+        String spanischWort = "";
+        String deutschesWort = "";
+        String priority = "";
+            FileInputStream fis = new FileInputStream(path);
+            while(fis.available() > 0) {
+                char b = (char) fis.read();
+
+                if (b == ':') {
+
+
+
+                    System.out.println(inObjCounter);
+                    switch (inObjCounter) {
+                        case 0:
+                            deutschesWort = cutWhitespace(result.toLowerCase());
+                        case 1:
+                            spanischWort = cutWhitespace(result.toLowerCase());
+                        case 2:
+                            priority = result;
+                    }
+                    result = "";
+                    inObjCounter++;
+
+
+
+                } else {
+                    c = b;
+
+                    if (c != ' ') {
+
+                        result += c;
+                        System.out.println(result);
+                    }
+                    if (inObjCounter == 2) {
+
+                        map.put(totalCounter, deutschesWort);
+                        map.put(totalCounter, spanischWort);
+                        map.put(totalCounter, priority);
+                        totalCounter++;
+                        inObjCounter = 0;
+                    }
+                }
+            }
+            return map;
+
+
+
+
     }
     public String cutWhitespace(String s){
         s.replaceAll(" ","");

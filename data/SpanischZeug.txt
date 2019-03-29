@@ -1,2 +1,2 @@
 
-Haus                    /casa                    /1
+Haus:casa:1
