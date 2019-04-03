@@ -15,6 +15,7 @@ public class Main {
     String lineSep = System.getProperty("file.separator");
 
     int i;
+    int v;
     JButton testButton = new JButton("Test");
 
     public static void main(String args[]) throws IOException {
@@ -51,6 +52,7 @@ public class Main {
              frame.add(testButton);
              frame.setVisible(true);
              System.out.println(readFile("SpanischZeug").get(0));
+             v = i;
              System.out.println("Ich habe die Boxen angezeigt");
 // Lege leere Listen an
              String[] alDeutsch = new String[2000];
@@ -62,9 +64,10 @@ public class Main {
                  public void actionPerformed(ActionEvent e) {
                      if(eingabeTextDeutsch.getText()  != "" && eingabeTextSpanisch.getText()  != "") {
 // Lese erfasste Wortpärchen aus den Textfeldern und schreibe sie in Listen
+                         System.out.println("aktueller Wert der Zählers: "+i);
 
-                         alDeutsch[i] = eingabeTextDeutsch.getText();
-                         alSpanisch[i] = eingabeTextSpanisch.getText();
+                         alDeutsch[i] = eingabeTextDeutsch.getText().trim();
+                         alSpanisch[i] = eingabeTextSpanisch.getText().trim();
                          alPriority[i] = 1;
                          eingabeTextDeutsch.setText("");
                          eingabeTextSpanisch.setText("");
@@ -99,25 +102,19 @@ public class Main {
         FileWriter fr = new FileWriter(path);
         BufferedWriter fos = new BufferedWriter(fr);
 // schreibe Datei mit allen Eingaben
-        for (int e = 0; e < i; e++) {
-            System.out.println("Ich schreibe in den Pfad " + path);
-            fos.newLine();
-            fos.append(cutWhitespace(deutschAl[e]));
-            fos.append(":");
-            fos.append(cutWhitespace(spanischAl[e]));
-            fos.append(":");
-            fos.append(String.valueOf(priorityAl[e]));
-            try {
-                fos.flush();
-            } catch (IOException e1) {
-                System.err.println("Could not flush BufferedWriter:" + e1);
-            }
+        for (int e = v; e < i; e++) {
+            fos.write(deutschAl[e] + ":" + spanischAl[e] + ":" + String.valueOf(priorityAl[e]));
+        }
+        try {
+            fos.flush();
+        } catch (IOException e1) {
+            System.err.println("Could not flush BufferedWriter:" + e1);
+        }
             try {
                 fr.close();
             } catch (IOException e1) {
                 System.err.println("Could not close FileWriter:" + e1);
             }
-        }
     }
 
     public Map<Integer,String> readFile(String filename) throws IOException {
@@ -136,49 +133,37 @@ public class Main {
 
                 if (b == ':') {
 
-
-
                     System.out.println(inObjCounter);
                     switch (inObjCounter) {
                         case 0:
-                            deutschesWort = cutWhitespace(result.toLowerCase());
+                            deutschesWort = result;
+                            System.out.println(deutschesWort);
+                            break;
                         case 1:
-                            spanischWort = cutWhitespace(result.toLowerCase());
-                        case 2:
-                            priority = result;
+                            spanischWort = result.toLowerCase();
+                            System.out.println(spanischWort);
+                            priority +=(char) fis.read();
+                            break;
                     }
                     result = "";
                     inObjCounter++;
 
-
-
                 } else {
                     c = b;
-
-                    if (c != ' ') {
-
-                        result += c;
-                        System.out.println(result);
-                    }
+                    result += c;
+                }
                     if (inObjCounter == 2) {
-
                         map.put(totalCounter, deutschesWort);
                         map.put(totalCounter, spanischWort);
                         map.put(totalCounter, priority);
                         totalCounter++;
+                        i = totalCounter;
                         inObjCounter = 0;
                     }
                 }
-            }
             return map;
 
 
-
-
-    }
-    public String cutWhitespace(String s){
-        s.replaceAll(" ","");
-        return s;
     }
 
 }
